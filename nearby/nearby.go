@@ -1,12 +1,18 @@
 package nearby
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/APWHY/app-rokt-api/util"
 )
+
+const MAX_LONG = 180
+const MIN_LONG = -180
+const MAX_LAT = 90
+const MIN_LAT = -90
 
 func GetNearby(w http.ResponseWriter, r *http.Request) {
 
@@ -15,8 +21,19 @@ func GetNearby(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
 	}
-	fmt.Fprintf(w, "Hello nearby, %s!\n", r.URL.Path[1:])
-	fmt.Fprintf(w, "long:%f, lat:%f, radius:%d!", long, lat, radius) // assuming the default 6 decimal places is enough (which it should be)
+	nearbyPermits := []*util.Permit{}
+	for _, p := range util.Permits {
+		if p.DistanceFrom(long, lat) <= radius {
+			nearbyPermits = append(nearbyPermits, p)
+		}
+	}
+
+	jsonResult, err := json.Marshal(nearbyPermits)
+	if err != nil {
+		fmt.Fprintf(w, "Error: %s", err.Error())
+		return
+	}
+	w.Write(jsonResult)
 }
 
 func parseArgs(r *http.Request) (float64, float64, int, error) {
@@ -26,13 +43,12 @@ func parseArgs(r *http.Request) (float64, float64, int, error) {
 		return 0, 0, 0, err
 	}
 	long, err := strconv.ParseFloat(longStr, 64)
-	if err != nil {
-
+	if err != nil || long > MAX_LONG || long < MIN_LONG {
 		return 0, 0, 0, fmt.Errorf("Error: %s is not a valid value for longitude", longStr)
 	}
 	latStr, err := util.PullFromQuery("lat", q)
 	lat, err := strconv.ParseFloat(latStr, 64)
-	if err != nil {
+	if err != nil || lat > MAX_LAT || lat < MIN_LAT {
 
 		return 0, 0, 0, fmt.Errorf("Error: %s is not a valid value for latitude", latStr)
 	}

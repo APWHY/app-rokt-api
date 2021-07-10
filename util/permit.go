@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gocarina/gocsv"
+	"github.com/umahmood/haversine"
 )
 
 // Not including all fields as they don't really seem that relevant
@@ -28,4 +29,10 @@ func init() {
 	if err := gocsv.UnmarshalFile(dataFile, &Permits); err != nil { // Load permits from file
 		panic(err)
 	}
+}
+
+// DistanceFrom returns the distwance between a coordinate and the Permit location in metres
+func (p *Permit) DistanceFrom(long float64, lat float64) int {
+	_, km := haversine.Distance(haversine.Coord{Lon: p.Long, Lat: p.Lat}, haversine.Coord{Lon: long, Lat: lat})
+	return int(km * 100) // we want to truncate instead of round
 }
