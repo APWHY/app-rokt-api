@@ -2,7 +2,6 @@ package autocomplete
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -11,7 +10,6 @@ import (
 
 func GetApplicantSuggestion(w http.ResponseWriter, r *http.Request) {
 	term, err := util.PullFromQuery("term", r.URL.Query())
-	fmt.Println(r.URL.Query()["term"][0])
 	if err != nil {
 		util.ErrorHandler(w, http.StatusBadRequest, err)
 		return
