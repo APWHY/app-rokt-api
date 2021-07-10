@@ -6,7 +6,7 @@ import (
 )
 
 func PullFromQuery(field string, vs url.Values) (string, error) {
-	if valueArr, ok := vs[field]; ok && len(valueArr[0]) > 1 {
+	if valueArr, ok := vs[field]; ok && len(valueArr[0]) > 0 {
 		return valueArr[0], nil
 	}
 	return "", fmt.Errorf("Invalid or missing %s.", field)
