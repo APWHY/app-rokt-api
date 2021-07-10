@@ -4,6 +4,7 @@ package util
 
 import (
 	"os"
+	"strings"
 
 	"github.com/gocarina/gocsv"
 	"github.com/umahmood/haversine"
@@ -21,14 +22,18 @@ type Permit struct {
 var Permits []*Permit
 
 func init() {
-	dataFile, err := os.OpenFile("data.csv", os.O_RDONLY, os.ModePerm)
-	if err != nil {
-		panic(err)
+	// the relative address of data.csv is different during go.test, so we don't load it then
+	if !strings.HasSuffix(os.Args[0], ".test") {
+		dataFile, err := os.OpenFile("data.csv", os.O_RDONLY, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+		defer dataFile.Close()
+		if err := gocsv.UnmarshalFile(dataFile, &Permits); err != nil { // Load permits from file
+			panic(err)
+		}
 	}
-	defer dataFile.Close()
-	if err := gocsv.UnmarshalFile(dataFile, &Permits); err != nil { // Load permits from file
-		panic(err)
-	}
+
 }
 
 // DistanceFrom returns the distwance between a coordinate and the Permit location in metres

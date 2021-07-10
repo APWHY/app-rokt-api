@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", HelloServer)
+	http.HandleFunc("/", DefaultPage)
 	http.HandleFunc("/nearby", nearby.GetNearby)
 	http.HandleFunc("/autocomplete/applicant", autocomplete.GetApplicantSuggestion)
 	http.HandleFunc("/autocomplete/address", autocomplete.GetAddressSuggestion)
@@ -18,6 +18,6 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 
-func HelloServer(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
+func DefaultPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "try /nearby, /autocomplete/applicant or /autocomplete/address")
 }

@@ -18,7 +18,7 @@ func GetNearby(w http.ResponseWriter, r *http.Request) {
 
 	long, lat, radius, err := parseArgs(r)
 	if err != nil {
-		fmt.Fprintf(w, "Error: %s", err.Error())
+		util.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 	nearbyPermits := []*util.Permit{}
@@ -30,7 +30,7 @@ func GetNearby(w http.ResponseWriter, r *http.Request) {
 
 	jsonResult, err := json.Marshal(nearbyPermits)
 	if err != nil {
-		fmt.Fprintf(w, "Error: %s", err.Error())
+		util.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	w.Write(jsonResult)
