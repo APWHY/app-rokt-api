@@ -39,5 +39,5 @@ func init() {
 // DistanceFrom returns the distwance between a coordinate and the Permit location in metres
 func (p *Permit) DistanceFrom(long float64, lat float64) int {
 	_, km := haversine.Distance(haversine.Coord{Lon: p.Long, Lat: p.Lat}, haversine.Coord{Lon: long, Lat: lat})
-	return int(km * 100) // we want to truncate instead of round
+	return int(km * 1000) // we want to truncate instead of round
 }
